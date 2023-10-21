@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using Sport_Shop.Areas.Customer.Models;
 using static NuGet.Packaging.PackagingConstants;
+using Microsoft.AspNetCore.Http;
 
 namespace Sport_Shop.Areas.Admin.Controllers
 {
@@ -22,6 +23,10 @@ namespace Sport_Shop.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            if(HttpContext.Session.GetInt32("ChucVu")==null || HttpContext.Session.GetInt32("ChucVu")<0)
+            {
+                return RedirectToAction("Index","Login");
+            }    
             ViewBag.SumNhanVien = await Database_ShopSport.Employee.CountAsync();
             ViewBag.SumCustomer = await Database_ShopSport.Customers.CountAsync();
             ViewBag.SumProduct= await Database_ShopSport.Products.CountAsync();
@@ -53,8 +58,12 @@ namespace Sport_Shop.Areas.Admin.Controllers
         }
         public async Task<IActionResult> EmployeeManager([FromQuery] int page)
         {
-            //phân trang
-            int begin;
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			//phân trang
+			int begin;
             if (page == 0 || page == 1)
             {
                 ViewBag.page = 1;
@@ -74,7 +83,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult AddEmployee()
         {
-            return View();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			return View();
         }
         [HttpPost]
         public async Task<IActionResult> AddEmployee(AddEmployee employee, IFormFile file)
@@ -187,7 +200,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteEmployee([FromRoute] int id)
         {
-            if (HttpContext.Session.GetInt32("ChucVu") != 0)
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			if (HttpContext.Session.GetInt32("ChucVu") != 0)
             {
                 TempData["Message"] = "<script>window.onload = function () {alert('Bạn không có quyền xóa nhân viên');}</script>";
                 return RedirectToAction("EmployeeManager", "Admin");
@@ -217,7 +234,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult EditEmployee([FromRoute] int id)
         {
-            var emp = Database_ShopSport.Employee.FirstOrDefault(x => x.EmployeeAccountId == id);
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var emp = Database_ShopSport.Employee.FirstOrDefault(x => x.EmployeeAccountId == id);
             return View(emp);
         }
         [HttpPost]
@@ -281,13 +302,21 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Profile()
         {
-            var epl=Database_ShopSport.Employee.FirstOrDefault(x=>x.EmployeeAccountId==HttpContext.Session.GetInt32("EmployyeeAccountId"));
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var epl=Database_ShopSport.Employee.FirstOrDefault(x=>x.EmployeeAccountId==HttpContext.Session.GetInt32("EmployyeeAccountId"));
             return View(epl);
         }
         [HttpGet]
         public IActionResult EditProfile()
         {
-            var emp = Database_ShopSport.Employee.FirstOrDefault(x => x.EmployeeAccountId == HttpContext.Session.GetInt32("EmployyeeAccountId"));
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var emp = Database_ShopSport.Employee.FirstOrDefault(x => x.EmployeeAccountId == HttpContext.Session.GetInt32("EmployyeeAccountId"));
             return View(emp);
         }
         [HttpPost]
@@ -347,7 +376,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult DoiMatKhau()
         {
-            return View();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			return View();
         }
         [HttpPost]
         public IActionResult DoiMatKhau(string MatKhauCu,string MatKhauMoi,string cfMatKhau)
@@ -397,13 +430,21 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> CategoryManager()
         {
-            var listCategory = await Database_ShopSport.Category.ToListAsync();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var listCategory = await Database_ShopSport.Category.ToListAsync();
             return View(listCategory);
         }
         [HttpGet]
         public IActionResult AddCategory()
         {
-            return View();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			return View();
         }
         [HttpPost]
         public async Task<IActionResult> AddCategory(Category categoryModel)
@@ -425,7 +466,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> EditCategory([FromRoute]int id)
         {
-            var findCategory = await Database_ShopSport.Category.FirstOrDefaultAsync(x=>x.CategoryId==id);
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var findCategory = await Database_ShopSport.Category.FirstOrDefaultAsync(x=>x.CategoryId==id);
             return View(findCategory);
         }
         [HttpPost]
@@ -461,7 +506,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         //Sản phẩm
         public async  Task<IActionResult> ProductManager()
         {
-            var ListProdcut = await Database_ShopSport.Products.ToListAsync();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var ListProdcut = await Database_ShopSport.Products.ToListAsync();
             return View(ListProdcut);
         }
         [HttpGet]
@@ -499,7 +548,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> AddProduct()
         {
-            ViewData["CategoryId"] = new SelectList(Database_ShopSport.Category, "CategoryId", "TenDanhMuc");
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			ViewData["CategoryId"] = new SelectList(Database_ShopSport.Category, "CategoryId", "TenDanhMuc");
             return View();
         }
         [HttpPost]
@@ -549,7 +602,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProduct([FromRoute] int id)
         {
-            ViewData["CategoryId"] = new SelectList(Database_ShopSport.Category, "CategoryId", "TenDanhMuc");
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			ViewData["CategoryId"] = new SelectList(Database_ShopSport.Category, "CategoryId", "TenDanhMuc");
             var findProduct = await Database_ShopSport.Products.FirstOrDefaultAsync(x=>x.ProductId==id);
             return View(findProduct);
         }
@@ -642,7 +699,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult SizeManger()
         {
-            return View();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			return View();
         }
         public async Task<JsonResult> GetListSize()
         {
@@ -736,7 +797,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         //Quản lý size sản phẩm
         public async Task<IActionResult> ProductSizeManager()
         {
-            ViewData["ProductId"] = new SelectList(Database_ShopSport.Products, "ProductId", "TenSanPham");
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			ViewData["ProductId"] = new SelectList(Database_ShopSport.Products, "ProductId", "TenSanPham");
             ViewData["SizeId"] = new SelectList(Database_ShopSport.Sizes, "SizeId", "TenSize");
             return View();
         }
@@ -753,6 +818,23 @@ namespace Sport_Shop.Areas.Admin.Controllers
                                               SoLuongTon = e.SoLuongTon,
                                           };
             return Json(listproductSize);
+        }
+        [HttpGet]
+        public JsonResult SearchProductSize(string text)
+        {
+           
+            var ListProdcut = from e in Database_ShopSport.productSizes
+                              join d in Database_ShopSport.Products on e.ProductId equals d.ProductId
+                              join f in Database_ShopSport.Sizes on e.SizeId equals f.SizeId
+                              where d.TenSanPham.Contains(text)
+                              select new
+                              {
+                                  Id = e.ProductSizeId,
+                                  TenSanPham = d.TenSanPham,
+                                  Size = f.TenSize,
+                                  SoLuongTon = e.SoLuongTon,
+                              };
+            return Json(ListProdcut);
         }
         [HttpPost]
         public async Task<IActionResult> AddProductSize(ProductSize model)
@@ -825,34 +907,58 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteProductSize([FromRoute] int id)
         {
-            var find = await Database_ShopSport.productSizes.FirstOrDefaultAsync(x=>x.ProductSizeId==id);
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var find = await Database_ShopSport.productSizes.FirstOrDefaultAsync(x=>x.ProductSizeId==id);
             Database_ShopSport.productSizes.Remove(find);
             await Database_ShopSport.SaveChangesAsync();
             return RedirectToAction("ProductSizeManager","Admin");
         }    
 
 
+
+
+
+
         [HttpGet]
         public async Task<IActionResult> DonHang()
         {
-            return View();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			return View();
         }
         [HttpGet]
         public async Task<IActionResult> ListDonHang()
         {
-            var result = Database_ShopSport.orders.OrderByDescending(data => data.OrderId).ToList();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var result = Database_ShopSport.orders.OrderByDescending(data => data.OrderId).ToList();
             return Json(result);
         }
         [HttpGet]
         public async Task<IActionResult> SearchDonHangByTrangThai(int trangthai)
         {
-            var list=await Database_ShopSport.orders.Where(x=>x.TrangThai== trangthai).OrderByDescending(data => data.OrderId).ToListAsync();
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var list=await Database_ShopSport.orders.Where(x=>x.TrangThai== trangthai).OrderByDescending(data => data.OrderId).ToListAsync();
             return Json(list);
         }
         [HttpGet]
         public async Task<IActionResult> SearchDonHang(string text)
         {
-            if (text == "" || text == null)
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			if (text == "" || text == null)
             {
                 var List =await Database_ShopSport.orders.OrderByDescending(data => data.OrderId).ToListAsync();
                 return Json(List);
@@ -871,7 +977,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> EditTrangThaiDonHang(int madh,int text)
         {
-            var findh = await Database_ShopSport.orders.FirstOrDefaultAsync(x => x.OrderId == madh);
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var findh = await Database_ShopSport.orders.FirstOrDefaultAsync(x => x.OrderId == madh);
             findh.TrangThai = text;
             Database_ShopSport.orders.Update(findh);
             await Database_ShopSport.SaveChangesAsync();
@@ -898,7 +1008,11 @@ namespace Sport_Shop.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrderDetailByOrderId(int madh)
         {
-            var List=from e in Database_ShopSport.orderDetails
+			if (HttpContext.Session.GetInt32("ChucVu") == null || HttpContext.Session.GetInt32("ChucVu") < 0)
+			{
+				return RedirectToAction("Index", "Login");
+			}
+			var List=from e in Database_ShopSport.orderDetails
                     join d in Database_ShopSport.Products on e.ProductId equals d.ProductId
                     join f in Database_ShopSport.Sizes on e.SizeId equals f.SizeId
                     where e.OrderId == madh 

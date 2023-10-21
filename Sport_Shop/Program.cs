@@ -25,7 +25,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{area=Customer}/{controller=Web_Store}/{action=Index}/{id?}");
-        //pattern: "{area=Admin}/{controller=Login}/{action=Index}/{id?}");
+        //pattern: "{area=Customer}/{controller=Web_Store}/{action=Index}/{id?}");
+        pattern: "{area=Admin}/{controller=Login}/{action=Index}/{id?}");
 });
 app.Run();
